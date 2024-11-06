@@ -4,9 +4,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
+import seedu.address.logic.commands.AddLogCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
+
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.*;
+
 
 /**
  * The UI component that is responsible for receiving user command inputs.
@@ -49,7 +54,7 @@ public class CommandBox extends UiPart<Region> {
             commandTextField.setDisable(true);
             AddLogPopup.display(
                     logEntry -> {
-                        // Replace actual newline characters with \n
+                        // Replace actual newline characters with \\n
                         String encodedLogEntry = logEntry.replace("\n", "\\n");
                         String commandWithLog = commandText + " l/" + encodedLogEntry;
                         executeCommand(commandWithLog);
@@ -71,12 +76,9 @@ public class CommandBox extends UiPart<Region> {
      * Basic regex can be customized based on the exact expected format.
      */
     private boolean isAddLogCommand(String input) {
-        //TODO: Instead of using a hardcoded regex, change it to use actual validation of both date and NRIC
         input = input.toLowerCase();
-        return input.matches("^addlog.*");
+        return input.matches("^addlog .*");
     }
-
-
 
     /**
      * Executes the given command text through the command executor and handles exceptions.

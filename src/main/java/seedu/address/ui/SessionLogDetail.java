@@ -32,7 +32,7 @@ public class SessionLogDetail extends UiPart<Region> {
      */
     public void setLogDetails(Log log) {
         detailDate.setText("Appointment Date: " + log.getAppointmentDate().toString());
-        detailSessionEntry.setText(log.getEntry());
+        detailSessionEntry.setText(log.getFormattedEntry());
     }
 }
 

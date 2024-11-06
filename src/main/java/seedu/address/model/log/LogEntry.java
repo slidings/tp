@@ -32,12 +32,19 @@ public class LogEntry {
     }
 
     /**
+     * Returns the formatted log entry.
+     */
+    public String getFormattedString() {
+        return entry.replace("\\n", "\n");
+    }
+
+    /**
      * Returns the truncated log entry.
      */
     public String getTruncatedEntry() {
         return entry.length() > 100
-                ? entry.substring(0, 100) + "..."
-                : entry;
+                ? getFormattedString().substring(0, 100) + "..."
+                : getFormattedString();
     }
 
     /**

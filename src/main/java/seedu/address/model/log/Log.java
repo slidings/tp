@@ -41,6 +41,10 @@ public class Log implements Comparable<Log> {
     public String getEntry() {
         return entry.getEntry();
     }
+
+    public String getFormattedEntry() {
+        return entry.getFormattedString();
+    }
     /**
      * Returns the truncated log entry.
      */

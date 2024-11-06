@@ -26,6 +26,7 @@ public class AddLogPopup {
         // Save button initially disabled
         Button saveButton = new Button("Save");
         saveButton.setDisable(true);
+
         // Enable the Save button only if the TextArea has text
         logEntryArea.textProperty().addListener((observable, oldValue, newValue) -> {
             saveButton.setDisable(newValue.trim().isEmpty());
