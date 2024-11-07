@@ -7,9 +7,16 @@ import javafx.scene.layout.Region;
 import seedu.address.logic.commands.AddLogCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.ArgumentMultimap;
+import seedu.address.logic.parser.ArgumentTokenizer;
+import seedu.address.logic.parser.ParserUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.log.AppointmentDate;
+import seedu.address.model.person.IdentityNumber;
+import seedu.address.ui.ResultDisplay;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.commands.AddLogCommand.MESSAGE_INVALID_ID;
 import static seedu.address.logic.parser.CliSyntax.*;
 
 
@@ -40,7 +47,7 @@ public class CommandBox extends UiPart<Region> {
      * Handles the Enter button pressed event.
      */
     @FXML
-    private void handleCommandEntered() {
+    private void handleCommandEntered() throws ParseException {
         String commandText = commandTextField.getText();
         if (commandText.equals("")) {
             return;
@@ -48,8 +55,40 @@ public class CommandBox extends UiPart<Region> {
 
         //TODO: Do proper validation for 1) addlog command 2) Validate NRIC and date
         // before popup window is allowed. Throw correct exceptions as well
-        if (isAddLogCommand(commandText) && !commandText.contains("l/")
-                && commandText.contains("i/") && commandText.contains("d/")) {
+        // Check if all fields' prefix are present
+
+        ArgumentMultimap argMultimap =
+                ArgumentTokenizer.tokenize(commandText, PREFIX_IDENTITY_NUMBER, PREFIX_LOG, PREFIX_DATE);
+
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_IDENTITY_NUMBER, PREFIX_LOG, PREFIX_DATE);
+
+        if (!argMultimap.getValue(PREFIX_IDENTITY_NUMBER).isEmpty() && argMultimap.getValue(PREFIX_LOG).isEmpty() &&
+                !argMultimap.getValue(PREFIX_DATE).isEmpty()) {
+            IdentityNumber identityNumber;
+
+            // Check if identity number exists
+            try {
+                // Parse identity number
+                identityNumber = ParserUtil.parseIdentityNumber(
+                        argMultimap.getValue(PREFIX_IDENTITY_NUMBER).get());
+            } catch (ParseException pe) {
+                new ResultDisplay().setFeedbackToUser(MESSAGE_INVALID_ID);
+                setStyleToIndicateCommandFailure();
+                return;
+            }
+
+            try {
+                // Parse date
+                String date = argMultimap.getValue(PREFIX_DATE).get();
+                if (!AppointmentDate.isValidDateString(date)) {
+                    throw new ParseException(MESSAGE_INVALID_COMMAND_FORMAT);
+                }
+
+            } catch (ParseException pe) {
+                commandTextField.setText(AppointmentDate.MESSAGE_CONSTRAINTS);
+                setStyleToIndicateCommandFailure();
+                return;
+            }
             // Disable commandTextField and trigger the popup for log entry
             commandTextField.setDisable(true);
             AddLogPopup.display(
@@ -65,6 +104,7 @@ public class CommandBox extends UiPart<Region> {
                         commandTextField.setDisable(false);
                     }
             );
+
         } else {
             // Handle command normally if l/ is present or if it's not an addlog command
             executeCommand(commandText);
