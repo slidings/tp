@@ -33,7 +33,7 @@ public class SessionLogPanel extends UiPart<Region> {
     public SessionLogPanel(ObservableList<Log> logList) {
         super(FXML);
         logListView.setItems(logList);
-        logListView.setCellFactory(listView -> new SessionLogViewCell());
+        logListView.setCellFactory(listView -> new SessionLogViewCell(logList));
 
         // Listener for logListView. Used to show detailed log.
         logListView.getSelectionModel().selectedItemProperty().addListener((observable, oldLog, newLog) -> {
@@ -58,6 +58,10 @@ public class SessionLogPanel extends UiPart<Region> {
      * Custom {@code ListCell} that displays the graphics of a SessionLog
      */
     class SessionLogViewCell extends ListCell<Log> {
+        private final ObservableList<Log> logList;
+        public SessionLogViewCell(ObservableList<Log> logList) {
+            this.logList = logList;
+        }
         @Override
         protected void updateItem(Log log, boolean empty) {
             super.updateItem(log, empty);
@@ -66,8 +70,10 @@ public class SessionLogPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                // 1 indexed of the log in ListCell. (ListCell extends IndexedCell)
-                Index logIndex = Index.fromZeroBased(getIndex());
+                int reverseIndex = logList.size() - getIndex() - 1;
+                // The oldest one should be lowest index.
+                // Note that this is edited as the session log was wrongly displayed in reverse order.
+                Index logIndex = Index.fromZeroBased(reverseIndex);
                 setGraphic(new SessionLogCard(log, logIndex).getRoot());
             }
         }

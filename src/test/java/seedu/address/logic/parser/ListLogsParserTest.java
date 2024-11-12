@@ -40,7 +40,7 @@ public class ListLogsParserTest {
         assertParseSuccess(parser, "i/S1234567D", expectedCommand);
 
         // valid identity number with leading/trailing whitespaces
-        assertParseSuccess(parser, " i/S1234567D  ", expectedCommand);
+        assertParseSuccess(parser, "  i/S1234567D  ", expectedCommand);
 
         // valid identity number with extra spaces between prefix and NRIC
         assertParseSuccess(parser, "  i/ S1234567D  ", expectedCommand);
