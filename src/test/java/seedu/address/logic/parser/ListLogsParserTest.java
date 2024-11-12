@@ -2,12 +2,12 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
-//import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
+import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.ListLogsCommand;
-//import seedu.address.model.person.IdentityNumber;
+import seedu.address.model.person.IdentityNumber;
 
 public class ListLogsParserTest {
 
@@ -32,17 +32,26 @@ public class ListLogsParserTest {
                 ListLogsCommand.MESSAGE_USAGE));
     }
 
-    //TODO: Cant parse succesfully - perhaps due to missing person someetimes?
-    /*
     @Test
     public void parse_validArgs_returnsListLogsCommand() {
-        // no leading and trailing whitespaces
+        // valid identity number with correct prefix
         IdentityNumber identityNumber = new IdentityNumber("S1234567D");
         ListLogsCommand expectedCommand = new ListLogsCommand(identityNumber);
         assertParseSuccess(parser, "i/S1234567D", expectedCommand);
 
-        // multiple whitespaces between arguments
-        assertParseSuccess(parser, "  i/S1234567D  ", expectedCommand);
+        // valid identity number with leading/trailing whitespaces
+        assertParseSuccess(parser, " i/S1234567D  ", expectedCommand);
+
+        // valid identity number with extra spaces between prefix and NRIC
+        assertParseSuccess(parser, "  i/ S1234567D  ", expectedCommand);
     }
-    */
+
+    @Test
+    public void parse_invalidArgs_throwsParseException() {
+        // Invalid identity number with invalid characters
+        assertParseFailure(parser, "i/!S1234567D", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                ListLogsCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "i/S1234567Z", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                ListLogsCommand.MESSAGE_USAGE)); // Test for invalid NRIC format
+    }
 }
